@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost & Found</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .nav-tabs li {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        
+        .nav-tabs li.active {
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .item-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .item-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .item-card p {
+            margin-bottom: 5px;
+        }
+        
+        .status-lost {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .status-found {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .search-results {
+            margin-top: 20px;
+        }
+        
+        .auth-forms {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .auth-forms h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login/Register Forms -->
+    <div id="auth-section">
+        <div class="auth-forms">
+            <h2>Welcome to Campus Lost & Found</h2>
+            <div id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button id="login-btn">Login</button>
+                <p style="text-align: center; margin-top: 15px;">
+                    Don't have an account? <a href="#" id="show-register">Register here</a>
+                </p>
+            </div>
+            
+            <div id="register-form" class="hidden">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-role">Role</label>
+                    <select id="reg-role" required>
+                        <option value="student">Student</option>
+                        <option value="staff">Staff</option>
+                    </select>
+                </div>
+                <button id="register-btn">Register</button>
+                <p style="text-align: center; margin-top: 15px;">
+                    Already have an account? <a href="#" id="show-login">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Application (shown after login) -->
+    <div id="app-section" class="hidden">
+        <header>
+            <h1>Campus Lost & Found System</h1>
+            <p>Welcome, <span id="current-user">User</span>! <a href="#" id="logout-link">Logout</a></p>
+        </header>
+        
+        <div class="container">
+            <ul class="nav-tabs">
+                <li class="active" data-tab="report-lost">Report Lost</li>
+                <li data-tab="report-found">Report Found</li>
+                <li data-tab="search-items">Search Items</li>
+                <li data-tab="my-items">My Reports</li>
+            </ul>
+            
+            <!-- Report Lost Item Tab -->
+            <div id="report-lost" class="tab-content active">
+                <h2>Report a Lost Item</h2>
+                <form id="lost-item-form">
+                    <div class="form-group">
+                        <label for="lost-item-name">Item Name</label>
+                        <input type="text" id="lost-item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lost-item-desc">Description</label>
+                        <textarea id="lost-item-desc" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lost-location">Location Lost</label>
+                        <input type="text" id="lost-location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lost-date">Date Lost</label>
+                        <input type="date" id="lost-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lost-reward">Reward (optional)</label>
+                        <input type="number" id="lost-reward" min="0" step="0.01">
+                    </div>
+                    <button type="submit">Submit Report</button>
+                </form>
+            </div>
+            
+            <!-- Report Found Item Tab -->
+            <div id="report-found" class="tab-content">
+                <h2>Report a Found Item</h2>
+                <form id="found-item-form">
+                    <div class="form-group">
+                        <label for="found-item-name">Item Name</label>
+                        <input type="text" id="found-item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="found-item-desc">Description</label>
+                        <textarea id="found-item-desc" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="found-location">Location Found</label>
+                        <input type="text" id="found-location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="found-date">Date Found</label>
+                        <input type="date" id="found-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="storage-location">Current Storage Location</label>
+                        <input type="text" id="storage-location" required>
+                    </div>
+                    <button type="submit">Submit Report</button>
+                </form>
+            </div>
+            
+            <!-- Search Items Tab -->
+            <div id="search-items" class="tab-content">
+                <h2>Search Lost & Found Items</h2>
+                <div class="form-group">
+                    <label for="search-keyword">Search Keyword</label>
+                    <input type="text" id="search-keyword" placeholder="Enter item name, description, or location">
+                </div>
+                <div class="form-group">
+                    <label>Item Type:</label>
+                    <label><input type="radio" name="item-type" value="all" checked> All Items</label>
+                    <label><input type="radio" name="item-type" value="lost"> Lost Items</label>
+                    <label><input type="radio" name="item-type" value="found"> Found Items</label>
+                </div>
+                <button id="search-btn">Search</button>
+                
+                <div class="search-results" id="search-results">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- My Reports Tab -->
+            <div id="my-items" class="tab-content">
+                <h2>My Reported Items</h2>
+                <button id="refresh-my-items">Refresh List</button>
+                <div id="my-items-list">
+                    <!-- User's items will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.nav-tabs li').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.nav-tabs li').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Toggle between login and register forms
+        document.getElementById('show-register').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('register-form').classList.remove('hidden');
+        });
+        
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+        });
+        
+        // Simulate login (in a real app, this would call your Java backend)
+        document.getElementById('login-btn').addEventListener('click', () => {
+            // Here you would make an AJAX call to your Java backend to authenticate
+            // For demo purposes, we'll just show the app
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('app-section').classList.remove('hidden');
+            document.getElementById('current-user').textContent = 
+                document.getElementById('login-username').value;
+        });
+        
+        // Logout
+        document.getElementById('logout-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('app-section').classList.add('hidden');
+            document.getElementById('auth-section').classList.remove('hidden');
+            // Clear forms
+            document.getElementById('login-form').reset();
+            document.getElementById('register-form').reset();
+            // Show login form
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+        });
+        
+        // Sample data for demonstration
+        const sampleItems = [
+            {
+                id: 1,
+                type: 'lost',
+                name: 'Black Backpack',
+                description: 'Black Jansport backpack with laptop compartment and water bottle pocket',
+                location: 'Library, 2nd floor',
+                date: '2023-10-15',
+                reporter: 'jdoe',
+                status: 'lost',
+                reward: 20.00
+            },
+            {
+                id: 2,
+                type: 'found',
+                name: 'Wireless Earbuds',
+                description: 'White wireless earbuds in a black case',
+                location: 'Student Center cafeteria',
+                date: '2023-10-16',
+                reporter: 'msmith',
+                status: 'found',
+                storageLocation: 'Campus Security Office'
+            }
+        ];
+        
+        // Display sample items in search (in a real app, this would come from your Java backend)
+        function displayItems(items, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p>No items found.</p>';
+                return;
+            }
+            
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                
+                const statusClass = item.status === 'lost' ? 'status-lost' : 'status-found';
+                const statusText = item.status === 'lost' ? 'LOST' : 'FOUND';
+                
+                card.innerHTML = `
+                    <h3>${item.name}</h3>
+                    <p><strong>Status:</strong> <span class="${statusClass}">${statusText}</span></p>
+                    <p><strong>Description:</strong> ${item.description}</p>
+                    <p><strong>Location:</strong> ${item.location}</p>
+                    <p><strong>Date:</strong> ${item.date}</p>
+                    ${item.type === 'lost' ? `<p><strong>Reward:</strong> $${item.reward.toFixed(2)}</p>` : ''}
+                    ${item.type === 'found' ? `<p><strong>Storage:</strong> ${item.storageLocation}</p>` : ''}
+                    <p><strong>Reported by:</strong> ${item.reporter}</p>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Search functionality
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const keyword = document.getElementById('search-keyword').value.toLowerCase();
+            const itemType = document.querySelector('input[name="item-type"]:checked').value;
+            
+            // Filter sample items (in real app, this filtering would happen on the server)
+            let results = sampleItems.filter(item => {
+                const matchesKeyword = item.name.toLowerCase().includes(keyword) || 
+                                      item.description.toLowerCase().includes(keyword) ||
+                                      item.location.toLowerCase().includes(keyword);
+                
+                const matchesType = itemType === 'all' || 
+                                  (itemType === 'lost' && item.type === 'lost') ||
+                                  (itemType === 'found' && item.type === 'found');
+                
+                return matchesKeyword && matchesType;
+            });
+            
+            displayItems(results, 'search-results');
+        });
+        
+        // Display user's items
+        document.getElementById('refresh-my-items').addEventListener('click', () => {
+            // In a real app, this would fetch the current user's items from the backend
+            const myItems = sampleItems.filter(item => item.reporter === 'jdoe'); // Simulate user's items
+            displayItems(myItems, 'my-items-list');
+        });
+        
+        // Form submissions (in a real app, these would send data to your Java backend)
+        document.getElementById('lost-item-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Lost item report would be submitted to the server in a real application');
+            // Reset form
+            e.target.reset();
+        });
+        
+        document.getElementById('found-item-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Found item report would be submitted to the server in a real application');
+            // Reset form
+            e.target.reset();
+        });
+        
+        document.getElementById('register-btn').addEventListener('click', () => {
+            alert('Registration would be submitted to the server in a real application');
+        });
+    </script>
+</body>
+</html>
